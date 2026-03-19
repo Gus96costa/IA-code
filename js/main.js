@@ -1,136 +1,136 @@
 document.addEventListener('DOMContentLoaded', () => {
     // 1. INITIALIZE LENIS (Elite Smooth Scroll - Silky)
-    const lenis = new Lenis({
+    window.lenisInstance = new Lenis({
         duration: 2,
         lerp: 0.05, // Silky (Ultra-smooth)
         smoothWheel: true,
         wheelMultiplier: 1,
     });
+    window.lenisInstance.stop(); // Lock scroll initially
 
     // Synchronize Lenis with GSAP ScrollTrigger
-    lenis.on('scroll', ScrollTrigger.update);
+    window.lenisInstance.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((time) => {
-        lenis.raf(time * 1000);
+        window.lenisInstance.raf(time * 1000);
     });
     gsap.ticker.lagSmoothing(0);
 
     gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-    // Variáveis de controle das animações iniciais da bike
+    // 2. HERO ANIMATION SYSTEM (MatchMedia + Responsive Relatives)
+    const mm = gsap.matchMedia();
     let bikeFloatTween;
-    let bikeIntroTween = gsap.from("#central-bike", {
-        y: -500,
-        duration: 1.5,
-        ease: "back.out(1.7)",
-        onComplete: () => {
-            // Inicia o Loop de Flutuação se não tiver rolado a página ainda
-            bikeFloatTween = gsap.to("#central-bike", {
-                y: "+=15",
-                duration: 1.5,
-                ease: "sine.inOut",
-                yoyo: true,
-                repeat: -1
-            });
-        }
-    });
+    let tlScroll;
+    let hubTl;
+    // window.bikeIntroTween is global
 
-    // Animações de Drift das Nuvens (Independentes e contínuas)
-    gsap.to("#cloud-front-1", {
-        x: "+=25", y: "-=10",
-        duration: 4.5, ease: "sine.inOut", yoyo: true, repeat: -1
-    });
-    gsap.to("#cloud-front-2", {
-        x: "-=20", y: "+=15",
-        duration: 3.8, ease: "sine.inOut", yoyo: true, repeat: -1
-    });
-    gsap.to("#cloud-back-1", {
-        x: "-=15", y: "-=8",
-        duration: 5, ease: "sine.inOut", yoyo: true, repeat: -1
-    });
-    gsap.to("#cloud-back-2", {
-        x: "+=18", y: "+=12",
-        duration: 4.2, ease: "sine.inOut", yoyo: true, repeat: -1
-    });
+    mm.add({
+        isDesktop: "(min-width: 1025px)",
+        isMobile: "(max-width: 1024px)"
+    }, (context) => {
+        let { isDesktop } = context.conditions;
 
-    const tlScroll = gsap.timeline({
-        scrollTrigger: {
-            trigger: "#clouds-scroller-section",
-            start: "top top", // Ativa quando seção bater no topo
-            end: "bottom bottom", // Libera ao final das 300vh
-            scrub: 2, // Scrub pesado para 'peso' e fluidez majestosa
-            onUpdate: (self) => {
-                // Quando o usuário começar a rolar a tela, matamos a Intro e Flutuação
-                if (self.progress > 0) {
-                    if (bikeIntroTween) { bikeIntroTween.kill(); bikeIntroTween = null; }
-                    if (bikeFloatTween) { bikeFloatTween.kill(); bikeFloatTween = null; }
+        // Reset elements (GSAP will handle the initial state within matchMedia)
+        gsap.set("#central-bike", { clearProps: "all" });
+        gsap.set(["#beat-1", "#beat-2", "#beat-3"], { opacity: 0, y: "20vh", x: "0vw" });
+        gsap.set("#city-ground", { yPercent: 100, opacity: 1 });
+
+        // 1. INTRO: Falling Bike + Floating Loop (Relative Units)
+        window.bikeIntroTween = gsap.from("#central-bike", {
+            y: "-100vh",
+            duration: 1.5,
+            ease: "back.out(1.7)",
+            paused: true,
+            onComplete: () => {
+                const scrollTrigger = ScrollTrigger.getById("heroScroll");
+                if (!scrollTrigger || scrollTrigger.progress === 0) {
+                    bikeFloatTween = gsap.to("#central-bike", {
+                        y: "+=2vh",
+                        duration: 1.5,
+                        ease: "sine.inOut",
+                        yoyo: true,
+                        repeat: -1
+                    });
                 }
             }
+        });
+
+        // 2. CLOUD DRIFT (Responsive)
+        const cloudDrifts = [
+            gsap.to("#cloud-front-1", { x: "2vw", y: "-1vh", duration: 4.5, ease: "sine.inOut", yoyo: true, repeat: -1 }),
+            gsap.to("#cloud-front-2", { x: "-2vw", y: "1.5vh", duration: 3.8, ease: "sine.inOut", yoyo: true, repeat: -1 }),
+            gsap.to("#cloud-back-1", { x: "-1.5vw", y: "-0.8vh", duration: 5, ease: "sine.inOut", yoyo: true, repeat: -1 }),
+            gsap.to("#cloud-back-2", { x: "1.8vw", y: "1.2vh", duration: 4.2, ease: "sine.inOut", yoyo: true, repeat: -1 })
+        ];
+
+        // 3. MAIN SCROLL TIMELINE
+        tlScroll = gsap.timeline({
+            id: "heroScroll",
+            scrollTrigger: {
+                trigger: "#clouds-scroller-section",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 2,
+                onUpdate: (self) => {
+                    if (self.progress > 0) {
+                        if (window.bikeIntroTween) { window.bikeIntroTween.kill(); window.bikeIntroTween = null; }
+                        if (bikeFloatTween) { bikeFloatTween.kill(); bikeFloatTween = null; }
+                        cloudDrifts.forEach(d => d.kill());
+                    }
+                }
+            }
+        });
+
+        tlScroll.addLabel("sync", 0)
+            // Atmospheric Clearance (Relative)
+            .to("#cloud-front-1", { x: "-80vw", scale: 2.5, opacity: 0, duration: 85, ease: "power1.inOut" }, "sync")
+            .to("#cloud-front-2", { x: "80vw", scale: 2.5, opacity: 0, duration: 85, ease: "power1.inOut" }, "sync")
+            .to("#cloud-back-1", { x: "-40vw", scale: 2.5, opacity: 0, duration: 80, ease: "power1.inOut" }, "sync")
+            .to("#cloud-back-2", { x: "40vw", scale: 2.5, opacity: 0, duration: 80, ease: "power1.inOut" }, "sync")
+
+            // Descent (Relative)
+            .to("#central-bike", { y: "35vh", duration: 100, ease: "none" }, "sync")
+            .to("#central-bike", { opacity: 1, scale: isDesktop ? 3 : 2, duration: 15, ease: "power2.out" }, "sync");
+
+        if (isDesktop) {
+            // Desktop Zig-Zag
+            tlScroll
+                .to("#central-bike", { x: "20vw", scale: 1, rotateZ: 12, duration: 15, ease: "power1.inOut" }, 10)
+                .to("#central-bike", { x: "-20vw", scale: 1, rotateZ: -12, duration: 25, ease: "power1.inOut" }, 30)
+                .to("#central-bike", { x: "0vw", scale: 1.5, rotateZ: 0, duration: 25, ease: "power1.inOut" }, 60);
+        } else {
+            // Mobile Straight Drop - Minimal scale changes
+            tlScroll
+                .to("#central-bike", { scale: 0.8, duration: 15, ease: "power1.inOut" }, 10)
+                .to("#central-bike", { scale: 1.2, duration: 25, ease: "power1.inOut" }, 30)
+                .to("#central-bike", { scale: 1, duration: 25, ease: "power1.inOut" }, 60);
         }
+
+        // Final Landing & Transition
+        tlScroll
+            .to("#central-bike", { x: "0vw", scale: 1.1, rotateZ: isDesktop ? 3 : 0, duration: 15, ease: "power2.out" }, 85)
+            .fromTo("#city-ground", { yPercent: 100, y: 0 }, { yPercent: 0, y: 0, duration: 40, ease: "power2.out" }, 60);
+
+        // TEXT BEATS (Relative)
+        tlScroll
+            .fromTo("#beat-1", { x: "-10vw", opacity: 0 }, { x: "0vw", opacity: 1, duration: 20, ease: "power1.out" }, 5)
+            .to("#beat-1", { y: "-20vh", duration: 15, ease: "none" }, 10)
+            .to("#beat-1", { opacity: 0, duration: 5, ease: "power2.in" }, 25)
+
+            .fromTo("#beat-2", { x: "10vw", opacity: 0 }, { x: "0vw", opacity: 1, duration: 20, ease: "power1.out" }, 35)
+            .to("#beat-2", { y: "-20vh", duration: 25, ease: "none" }, 40)
+            .to("#beat-2", { opacity: 0, duration: 5, ease: "power2.in" }, 65)
+
+            .to("#beat-3", { opacity: 1, y: "5vh", duration: 10, ease: "power2.out" }, 75)
+            .to("#beat-3", { y: "-10vh", duration: 15, ease: "none" }, 80)
+            .to("#beat-3", { opacity: 0, duration: 5, ease: "power2.in" }, 95);
+
+        // Elite Blend
+        tlScroll
+            .to("#central-bike", { y: "+=15vh", opacity: 0, duration: 15, ease: "power2.inOut" }, 85)
+            .to("#city-ground", { opacity: 0, duration: 10, ease: "power2.inOut" }, 90);
     });
 
-    tlScroll.addLabel("sync", 0)
-        // Limpeza Atmosférica: Nuvens Frontais abrem-se rápido expandindo e sumindo
-        .to("#cloud-front-1", { x: "-80vw", scale: 2.5, opacity: 0, duration: 85, ease: "power1.inOut" }, "sync")
-        .to("#cloud-front-2", { x: "80vw", scale: 2.5, opacity: 0, duration: 85, ease: "power1.inOut" }, "sync")
-
-        // Limpeza Atmosférica: Nuvens Traseiras abrem devagar expandindo e sumindo
-        .to("#cloud-back-1", { x: "-40vw", scale: 2.5, opacity: 0, duration: 80, ease: "power1.inOut" }, "sync")
-        .to("#cloud-back-2", { x: "40vw", scale: 2.5, opacity: 0, duration: 80, ease: "power1.inOut" }, "sync")
-
-        // Objeto central: Descida constante em Y simulando perda de altitude
-        .to("#central-bike", { y: "30vh", duration: 100, ease: "none" }, "sync")
-
-        // Objeto central: START (Intro Level)
-        .to("#central-bike", { opacity: 2, scale: 3, duration: 15, ease: "power2.out" }, "sync")
-
-        // PIVOT 1 (Beat 1 - Texto na esquerda) -> Bike inclina pra Direita
-        .to("#central-bike", { x: "20vw", scale: 1, rotateZ: 12, duration: 15, ease: "power1.inOut" }, 10)
-
-        // PIVOT 2 (Beat 2 - Texto na direita) -> Bike inclina pra Esquerda
-        .to("#central-bike", { x: "-20vw", scale: 1, rotateZ: -12, duration: 25, ease: "power1.inOut" }, 30)
-
-        // PIVOT 3 (Beat 3 - Texto central/base) -> Bike volta para o Centro nivelando
-        .to("#central-bike", { x: "0vw", scale: 1.5, rotateZ: 0, duration: 25, ease: "power1.inOut" }, 60)
-
-        // LANDING (Final scale down e pouso com flare rotation: 3)
-        .to("#central-bike", { x: "0vw", scale: 1.1, rotateZ: 3, duration: 15, ease: "power2.out" }, 85)
-
-        // Revelação do Chão/Cidade: A cidade sobe e encaixa (começou escondida abaixo)
-        .fromTo("#city-ground", { yPercent: 100, y: 0 }, { yPercent: 0, y: 0, duration: 40, ease: "power2.out" }, 60)
-
-        // --- TEXT BEATS (CINEMATIC TYPOGRAPHY OVERYLAYS) ---
-
-        // BEAT 1 (Cloud level) - Text on Left
-        .fromTo("#beat-1", { x: "-10vw" }, { x: "0vw", duration: 20, ease: "power1.out" }, 5)
-        .to("#beat-1", { opacity: 1, y: "0vh", duration: 5, ease: "power2.out" }, 5)
-        .to("#beat-1", { y: "-20vh", duration: 15, ease: "none" }, 10)
-        .to("#beat-1", { opacity: 0, duration: 5, ease: "power2.in" }, 25)
-
-        // BEAT 2 (Mid-descent) - Text on Right
-        .fromTo("#beat-2", { x: "10vw" }, { x: "0vw", duration: 20, ease: "power1.out" }, 35)
-        .to("#beat-2", { opacity: 1, y: "0vh", duration: 5, ease: "power2.out" }, 35)
-        .to("#beat-2", { y: "-20vh", duration: 25, ease: "none" }, 40)
-        .to("#beat-2", { opacity: 0, duration: 5, ease: "power2.in" }, 65)
-
-        // BEAT 3 (Landing approach) - Centered
-        .to("#beat-3", { opacity: 1, y: "5vh", duration: 5, ease: "power2.out" }, 75)
-        .to("#beat-3", { y: "-10vh", duration: 15, ease: "none" }, 80)
-        .to("#beat-3", { opacity: 0, duration: 5, ease: "power2.in" }, 95)
-
-        // -------------------------------------------------------------------
-        // THE ELITE SEAMLESS BLEND (Transição minimalista para os cards)
-        // -------------------------------------------------------------------
-
-        // 1. Despedida Elegante (Bike merge para o escuro)
-        .to("#central-bike", {
-            y: "+=100px",
-            opacity: 0,
-            duration: 15,
-            ease: "power2.inOut"
-        }, 85)
-
-        // 2. Fade Out da Cidade (Revela o background profundo)
-        .to("#city-ground", { opacity: 0, duration: 10, ease: "power2.inOut" }, 90);
 
     // --- ANIMACAO DO MANIFESTO STACK ---
     const manifestoCards = gsap.utils.toArray('.manifesto-card');
@@ -212,11 +212,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const hubPhone = document.getElementById("hub-phone");
     const hubCards = document.querySelectorAll(".flashlight-hub-card");
 
-    const hubTl = gsap.timeline({
+    hubTl = gsap.timeline({
         scrollTrigger: {
             trigger: "#app-hub-section",
             start: "top 15%",
-            end: "+=8500",
+            end: "bottom bottom",
             scrub: 2,
             onUpdate: () => {
                 if (!hubPhone) return;
@@ -239,8 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     hubCards.forEach(card => card.classList.add("light-active"));
-    gsap.set("#vantage-cards", { x: "-100vw", opacity: 0 });
-    gsap.set("#plans-cards-rail", { x: "100vw", opacity: 0 });
+    gsap.set("#vantage-cards", { x: "-100vw", autoAlpha: 0 });
+    gsap.set("#plans-cards-rail", { x: "100vw", autoAlpha: 0 });
 
     // TIMELINE CALIBRADA: Equilíbrio entre Corda e Velocidade
     hubTl.fromTo("#hub-phone",
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // TRILHO 1: ECOSYSTEM
         .to("#hub-phone", { x: "-32vw", rotationY: 15, rotationZ: -4, duration: 20, ease: "power2.inOut" }, "start-magnet")
-        .to("#vantage-cards", { opacity: 1, duration: 5 }, "start-magnet+=5")
+        .to("#vantage-cards", { autoAlpha: 1, duration: 5 }, "start-magnet+=5")
         .to("#vantage-title", { opacity: 1, duration: 5 }, "start-magnet+=8")
         .to("#magnet-glow", { filter: "drop-shadow(0 -15px 40px rgba(56,189,248,0.5))", duration: 5 }, "start-magnet+=10")
 
@@ -276,13 +276,13 @@ document.addEventListener('DOMContentLoaded', () => {
         .to("#vantage-cards", { x: "0vw", duration: 45 }, "ecosystem-focus")
 
         .to("#hub-phone", { x: "-32vw", rotationY: 15, duration: 25, ease: "power2.inOut" }, "ecosystem-focus+=45")
-        .to("#vantage-cards", { x: "-100vw", opacity: 0, duration: 25, ease: "power2.inOut" }, "ecosystem-focus+=45")
+        .to("#vantage-cards", { x: "-100vw", autoAlpha: 0, duration: 25, ease: "power2.inOut" }, "ecosystem-focus+=45")
         .to("#vantage-title", { opacity: 0, duration: 10 }, "ecosystem-focus+=45")
         .to("#magnet-glow", { filter: "drop-shadow(0 0 0 rgba(0,0,0,0))", duration: 10 }, "ecosystem-focus+=65")
 
         // TRILHO 2: PRICING
         .to("#hub-phone", { x: "32vw", rotationY: -15, rotationZ: 4, duration: 25, ease: "power2.inOut" }, "ecosystem-focus+=75")
-        .to("#plans-cards-rail", { opacity: 1, duration: 5 }, "ecosystem-focus+=100")
+        .to("#plans-cards-rail", { autoAlpha: 1, duration: 5 }, "ecosystem-focus+=100")
         .to("#pricing-title", { opacity: 1, duration: 5 }, "ecosystem-focus+=103")
 
         .to("#hub-phone", { x: "-32vw", rotationY: 5, duration: 30, ease: "sine.inOut" }, "ecosystem-focus+=110")
@@ -292,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .to("#plans-cards-rail", { x: "0vw", duration: 45 }, "plans-focus")
 
         .to("#hub-phone", { x: "32vw", rotationY: -15, duration: 25, ease: "power2.inOut" }, "plans-focus+=45")
-        .to("#plans-cards-rail", { x: "100vw", opacity: 0, duration: 25, ease: "power2.inOut" }, "plans-focus+=45")
+        .to("#plans-cards-rail", { x: "100vw", autoAlpha: 0, duration: 25, ease: "power2.inOut" }, "plans-focus+=45")
         .to("#pricing-title", { opacity: 0, duration: 10 }, "plans-focus+=45")
 
         // SAÍDA REFINADA: Volta ao centro, pausa e mergulha
@@ -474,17 +474,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.history.scrollRestoration = 'manual';
                     ScrollTrigger.clearScrollMemory();
 
-                    lenis.scrollTo(0, {
+                    window.lenisInstance.scrollTo(0, {
                         duration: 2,
                         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Power4-like easing
                         onComplete: () => {
-                            if (typeof tlScroll !== 'undefined') {
+                            if (tlScroll && tlScroll.scrollTrigger) {
                                 tlScroll.pause(0);
                                 tlScroll.scrollTrigger.disable();
                                 tlScroll.scrollTrigger.enable();
                             }
-                            if (typeof bikeIntroTween !== 'undefined') {
-                                bikeIntroTween.restart();
+                            if (window.bikeIntroTween) {
+                                window.bikeIntroTween.restart();
                             }
                             ScrollTrigger.refresh(true);
                         }
@@ -493,26 +493,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (targetId === 'app-trigger') {
-                    const introScrollPos = hubTl.scrollTrigger.labelToScroll("app-intro-focus");
-                    lenis.scrollTo(introScrollPos, {
-                        duration: 2,
-                        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
-                    });
+                    if (hubTl && hubTl.scrollTrigger) {
+                        const introScrollPos = hubTl.scrollTrigger.labelToScroll("app-intro-focus");
+                        window.lenisInstance.scrollTo(introScrollPos, {
+                            duration: 2,
+                            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+                        });
+                    } else {
+                        window.lenisInstance.scrollTo('#app-hub-section', { duration: 2 });
+                    }
                     return;
                 }
 
                 if (targetId === 'plans') {
-                    const plansScrollPos = hubTl.scrollTrigger.labelToScroll("plans-focus");
-                    lenis.scrollTo(plansScrollPos, {
-                        duration: 2,
-                        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
-                    });
+                    if (hubTl && hubTl.scrollTrigger) {
+                        const plansScrollPos = hubTl.scrollTrigger.labelToScroll("plans-focus");
+                        window.lenisInstance.scrollTo(plansScrollPos, {
+                            duration: 2,
+                            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+                        });
+                    } else {
+                        window.lenisInstance.scrollTo('#plans', { duration: 2 });
+                    }
                     return;
                 }
 
                 const targetElement = document.getElementById(targetId);
                 if (targetElement) {
-                    lenis.scrollTo(targetElement, {
+                    window.lenisInstance.scrollTo(targetElement, {
                         duration: 2,
                         offset: targetId === 'download' ? 0 : -80,
                         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
@@ -548,4 +556,101 @@ document.addEventListener('DOMContentLoaded', () => {
         const el = document.getElementById(id);
         if (el) activeObserver.observe(el);
     });
+    // --- 9. MOBILE MENU CONTROLS ---
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+    const closeMobileMenu = document.getElementById('close-mobile-menu');
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+    const toggleMobileMenu = () => {
+        mobileMenuOverlay.classList.toggle('opacity-0');
+        mobileMenuOverlay.classList.toggle('pointer-events-none');
+        mobileMenuOverlay.classList.toggle('invisible');
+        // Prevent scroll when menu is open
+        if (!mobileMenuOverlay.classList.contains('opacity-0')) {
+            window.lenisInstance.stop();
+        } else {
+            window.lenisInstance.start();
+        }
+    };
+
+    if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+    if (closeMobileMenu) closeMobileMenu.addEventListener('click', toggleMobileMenu);
+
+    mobileNavLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href');
+            toggleMobileMenu();
+            window.lenisInstance.scrollTo(targetId, {
+                offset: -80,
+                duration: 2
+            });
+        });
+    });
 });
+
+    // ==========================================
+    // SUSTAINABILITY IMPACT ANIMATION (DASHBOARD)
+    // ==========================================
+    const impactSection = document.getElementById('impact');
+    if (impactSection) {
+        ScrollTrigger.create({
+            trigger: "#impact",
+            start: "top 75%", // Ativa quando a secção entra 75% no ecrã
+            onEnter: () => {
+                // 1. Animar a contagem dos números (0 a 1200)
+                const counters = document.querySelectorAll('#impact .gsap-counter');
+                counters.forEach(counter => {
+                    const target = parseInt(counter.getAttribute('data-target') || counter.innerText);
+                    // Reseta para 0 antes de animar
+                    counter.innerText = "0"; 
+                    gsap.to(counter, {
+                        innerHTML: target,
+                        duration: 2.5,
+                        snap: { innerHTML: 1 }, // Roda sem decimais
+                        ease: "power3.out"
+                    });
+                });
+
+                // 2. Animar o SVG do Gráfico (A linha principal que se desenha)
+                // Procura a tag <path> que representa a linha do gráfico no Card 1
+                const chartLine = document.querySelector('#impact svg path.aura-slice'); 
+                if (chartLine) {
+                    const length = chartLine.getTotalLength();
+                    // Esconde a linha inicialmente
+                    gsap.set(chartLine, { strokeDasharray: length, strokeDashoffset: length });
+                    // Desenha a linha da esquerda para a direita
+                    gsap.to(chartLine, {
+                        strokeDashoffset: 0,
+                        duration: 2.5,
+                        ease: "power2.inOut",
+                        delay: 0.2
+                    });
+                }
+            },
+            once: true // Anima apenas a primeira vez que o utilizador passa
+        });
+    }
+
+// ==========================================
+// LOAD STATE & REVEAL CHOREOGRAPHY
+// ==========================================
+window.addEventListener('load', () => {
+    // Força um pequeno atraso de segurança (100ms) para o GSAP estabilizar o matchMedia
+    setTimeout(() => {
+        gsap.to("#loader", {
+            opacity: 0,
+            duration: 0.8,
+            ease: "power2.inOut",
+            onComplete: () => {
+                const loader = document.getElementById("loader");
+                if (loader) loader.style.display = "none";
+
+                if (window.lenisInstance) window.lenisInstance.start();
+                if (window.bikeIntroTween) window.bikeIntroTween.play();
+            }
+        });
+    }, 100);
+});
+

@@ -33,17 +33,22 @@
 
 <body class="bg-brand-offwhite">
 
+    <div id="loader" class="fixed inset-0 z-[100] bg-brand-offwhite flex items-center justify-center transition-all">
+        <img src="assets/img/logo-zmaj.webp" alt="Loading Zmaj" class="w-24 md:w-32 h-auto opacity-50 animate-pulse">
+    </div>
+
     <!-- Navbar: Pill Glass -->
     <nav id="navbar"
-        class="nav-beam fixed top-6 left-1/2 -translate-x-1/2 w-[95vw] lg:w-fit z-50 glass-panel rounded-full pl-6 pr-2 py-2 flex items-center justify-between transition-all duration-300">
+        class="nav-beam fixed top-6 left-1/2 -translate-x-1/2 w-fit z-50 glass-panel rounded-full pl-6 pr-3 py-2 flex items-center gap-6 md:gap-10 lg:gap-12 transition-all duration-300">
 
-        <a href="#home" class="flex items-center cursor-pointer mr-12 relative group nav-link-item" data-section="home"
-            aria-label="Zmaj Homepage">
+        <a href="#home" class="flex items-center cursor-pointer flex-shrink-0 relative group nav-link-item"
+            data-section="home" aria-label="Zmaj Homepage">
             <img src="assets/img/logo-zmaj.webp" alt="Zmaj Logo"
                 class="h-8 w-auto object-contain scale-[1.9] group-hover:scale-[2.1] transition-transform duration-500 drop-shadow-sm origin-center">
         </a>
 
-        <div class="hidden lg:flex items-center gap-10 mr-10" role="navigation" aria-label="Main Navigation">
+        <!-- Desktop Links -->
+        <div class="hidden lg:flex items-center gap-6 xl:gap-10" role="navigation" aria-label="Main Navigation">
             <a href="#vision"
                 class="text-xs font-mono font-bold tracking-widest text-brand-charcoal transition-colors uppercase nav-link-item"
                 data-section="vision" aria-label="Explore Zmaj's Vision">Vision</a>
@@ -58,18 +63,47 @@
                 data-section="contacts" aria-label="Contact Zmaj Support">Contacts</a>
         </div>
 
-        <a href="#download" aria-label="Download the Zmaj App"
-            class="bg-[#365CD1] text-white text-[10px] font-mono uppercase rounded-full px-8 py-2.5 hover:bg-[#4B5EC2] transition-all group shadow-xl flex items-center gap-3 nav-link-item btn-beam relative overflow-hidden"
-            data-section="download"
-            onmousemove="this.style.setProperty('--mouse-x', (event.clientX - this.getBoundingClientRect().left) + 'px'); this.style.setProperty('--mouse-y', (event.clientY - this.getBoundingClientRect().top) + 'px');">
-            <div class="conversion-flashlight-reveal"></div>
-            <span class="relative z-10 flex items-center gap-2">
-                Download
-                <span class="iconify group-hover:translate-x-1 transition-transform"
-                    data-icon="solar:cloud-download-bold-duotone"></span>
-            </span>
-        </a>
+        <!-- Action Group (Download + Hamburger) -->
+        <div class="flex items-center gap-3">
+            <a href="#download" aria-label="Download the Zmaj App"
+                class="bg-[#365CD1] text-white text-[10px] font-mono uppercase rounded-full px-8 py-2.5 hover:bg-[#4B5EC2] transition-all group shadow-xl flex items-center gap-3 nav-link-item btn-beam relative overflow-hidden"
+                data-section="download"
+                onmousemove="this.style.setProperty('--mouse-x', (event.clientX - this.getBoundingClientRect().left) + 'px'); this.style.setProperty('--mouse-y', (event.clientY - this.getBoundingClientRect().top) + 'px');">
+                <div class="conversion-flashlight-reveal"></div>
+                <span class="relative z-10 flex items-center gap-2">
+                    Download
+                    <span class="iconify group-hover:translate-x-1 transition-transform"
+                        data-icon="solar:cloud-download-bold-duotone"></span>
+                </span>
+            </a>
+
+            <!-- Mobile Hamburger Button -->
+            <button id="mobile-menu-btn"
+                class="lg:hidden flex items-center justify-center p-2 text-brand-charcoal hover:bg-black/5 rounded-full transition-colors"
+                aria-label="Open Mobile Menu">
+                <span class="iconify text-2xl" data-icon="solar:hamburger-menu-linear"></span>
+            </button>
+        </div>
     </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu-overlay"
+        class="fixed inset-0 z-[45] bg-brand-offwhite/95 backdrop-blur-xl opacity-0 pointer-events-none invisible transition-all duration-300 flex flex-col items-center justify-center gap-8">
+        <a href="#vision"
+            class="mobile-nav-link text-3xl font-sans font-black text-brand-charcoal uppercase tracking-tighter hover:text-[#365CD1] transition-colors">Vision</a>
+        <a href="#app-trigger"
+            class="mobile-nav-link text-3xl font-sans font-black text-brand-charcoal uppercase tracking-tighter hover:text-[#365CD1] transition-colors">App</a>
+        <a href="#plans"
+            class="mobile-nav-link text-3xl font-sans font-black text-brand-charcoal uppercase tracking-tighter hover:text-[#365CD1] transition-colors">Plans</a>
+        <a href="#contacts"
+            class="mobile-nav-link text-3xl font-sans font-black text-brand-charcoal uppercase tracking-tighter hover:text-[#365CD1] transition-colors">Contacts</a>
+
+        <!-- Close Button (Optional but good for UX) -->
+        <button id="close-mobile-menu"
+            class="absolute top-10 right-10 p-4 rounded-full bg-black/5 hover:bg-black/10 transition-colors">
+            <span class="iconify text-3xl text-brand-charcoal" data-icon="solar:close-circle-linear"></span>
+        </button>
+    </div>
 
     <!-- START OF MAIN CONTENT -->
     <main id="main-content">
@@ -272,7 +306,7 @@
 
         <!-- SEÇÃO 3: APP HUB -->
         <section id="app-hub-section"
-            class="relative w-full h-[1300vh] z-20 overflow-visible -mt-[120vh] pt-[12vh] opacity-0"
+            class="relative w-full h-[800vh] lg:h-[1100vh] z-20 overflow-visible -mt-[120vh] pt-[12vh] opacity-0"
             style="background: radial-gradient(circle at center, #FFFFFF 0%, #E0F6FF 60%, #9cc9f9 100%);">
 
             <!-- Ponto de ancoragem preciso: Posicionado exatamente no início da entrada do primeiro texto narrativo -->
@@ -282,59 +316,64 @@
 
                 <!-- VANTAGENS (Esquerda -> Trilho) -->
                 <div id="vantage-cards"
-                    class="absolute left-0 w-max h-full flex flex-col justify-center px-6 md:pl-16 pr-[5vw] pointer-events-none z-10 opacity-0 -translate-x-[100vw]">
+                    class="absolute left-0 w-max h-full flex flex-col justify-center px-6 pt-28 pb-10 lg:pt-24 lg:pb-6 xl:pt-0 xl:pb-0 lg:pl-16 pr-[5vw] pointer-events-none z-10 opacity-0 -translate-x-[100vw]">
 
                     <!-- Título do Trilho Esquerdo (Vantagens) embutido no slider -->
-                    <div id="vantage-title" class="w-full text-left z-10 opacity-0 pointer-events-none mb-10">
+                    <div id="vantage-title"
+                        class="w-full text-left z-10 opacity-0 pointer-events-none mb-2 lg:mb-4 xl:mb-10">
                         <h2
-                            class="text-4xl md:text-6xl font-sans font-black tracking-tighter leading-[1.1] py-2 brand-gradient-title drop-shadow-sm">
+                            class="text-2xl lg:text-4xl xl:text-6xl font-sans font-black tracking-tighter leading-[1.1] py-2 brand-gradient-title drop-shadow-sm">
                             Digital Ecosystem
                         </h2>
                     </div>
 
-                    <div class="flex flex-row items-stretch gap-5 w-full">
+                    <div class="flex flex-col xl:flex-row items-center xl:items-stretch gap-6 lg:gap-3 xl:gap-5 w-full">
                         <!-- Card 1 -->
                         <div
-                            class="flashlight-hub-card btn-beam flex-shrink-0 w-[85vw] max-w-[310px] p-6 md:p-7 rounded-3xl shadow-[0_20px_60px_rgba(20,30,50,0.08)] pointer-events-auto flex flex-col border border-transparent hover:border-white/10 transition-all">
+                            class="flashlight-hub-card btn-beam flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-[60vw] xl:w-[22vw] max-w-[320px] p-4 lg:p-5 xl:p-8 rounded-3xl shadow-[0_20px_60px_rgba(20,30,50,0.08)] pointer-events-auto flex flex-col border border-transparent hover:border-white/10 transition-all">
                             <div
-                                class="w-10 h-10 rounded-full bg-brand-aura/10 text-brand-aura flex items-center justify-center mb-6">
+                                class="w-8 h-8 lg:w-8 lg:h-8 rounded-full bg-brand-aura/10 text-brand-aura flex items-center justify-center mb-2 lg:mb-3 xl:w-10 xl:h-10 xl:mb-6">
                                 <span class="iconify text-lg" data-icon="solar:widget-add-bold-duotone"></span>
                             </div>
                             <h4
-                                class="font-sans font-black tracking-tighter leading-[1.1] py-1 text-2xl brand-gradient-title mb-4">
+                                class="font-sans font-black tracking-tighter leading-[1.1] py-1 text-lg lg:text-xl xl:text-3xl brand-gradient-title mb-1 lg:mb-2 xl:mb-4">
                                 Connected Ecosystem</h4>
-                            <p class="text-brand-muted font-sans text-sm leading-relaxed">Smart dashboard with ride
+                            <p
+                                class="text-brand-muted font-sans text-[11px] lg:text-[12px] xl:text-sm leading-tight mb-2 lg:mb-3 xl:mb-6">
+                                Smart dashboard
+                                with ride
                                 estimates and daily usage statistics in the city.</p>
                         </div>
-
                         <!-- Card 2 (Centered/Majorized to match Annual Plan) -->
                         <div
-                            class="flashlight-hub-card btn-beam flex-shrink-0 w-[85vw] max-w-[330px] p-6 md:p-8 rounded-3xl shadow-[0_20px_60px_rgba(20,30,50,0.08)] pointer-events-auto flex flex-col border border-transparent hover:border-white/10 transition-all">
+                            class="flashlight-hub-card btn-beam flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-[60vw] xl:w-[22vw] max-w-[320px] p-4 lg:p-5 xl:p-8 rounded-3xl shadow-[0_20px_60px_rgba(20,30,50,0.08)] pointer-events-auto flex flex-col border border-transparent hover:border-white/10 transition-all">
                             <div
-                                class="w-10 h-10 rounded-full bg-brand-zip/10 text-brand-zip flex items-center justify-center mb-6">
+                                class="w-8 h-8 lg:w-8 lg:h-8 rounded-full bg-brand-zip/10 text-brand-zip flex items-center justify-center mb-2 lg:mb-3 xl:w-10 xl:h-10 xl:mb-6">
                                 <span class="iconify text-lg" data-icon="solar:leaf-bold-duotone"></span>
                             </div>
                             <h4
-                                class="font-sans font-black tracking-tighter leading-[1.1] py-1 text-3xl brand-gradient-title mb-5">
+                                class="font-sans font-black tracking-tighter leading-[1.1] py-1 text-lg lg:text-xl xl:text-3xl brand-gradient-title mb-1 lg:mb-2 xl:mb-4">
                                 Zero Impact</h4>
-                            <p class="text-brand-muted font-sans text-sm leading-relaxed">Track your reduced carbon
-                                footprint
-                                in real-time. Move while cleaning the air.</p>
+                            <p
+                                class="text-brand-muted font-sans text-[11px] lg:text-[12px] xl:text-sm leading-tight mb-2 lg:mb-3 xl:mb-6">
+                                Track your reduced
+                                carbon
+                                footprint in real-time. Move while cleaning the air.</p>
                         </div>
-
                         <!-- Card 3 -->
                         <div
-                            class="flashlight-hub-card btn-beam flex-shrink-0 w-[85vw] max-w-[310px] p-6 md:p-7 rounded-3xl shadow-[0_20px_60px_rgba(20,30,50,0.08)] pointer-events-auto flex flex-col border border-transparent hover:border-white/10 transition-all">
+                            class="flashlight-hub-card btn-beam flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-[60vw] xl:w-[22vw] max-w-[320px] p-4 lg:p-5 xl:p-8 rounded-3xl shadow-[0_20px_60px_rgba(20,30,50,0.08)] pointer-events-auto flex flex-col border border-transparent hover:border-white/10 transition-all">
                             <div
-                                class="w-10 h-10 rounded-full bg-[#1c1b1b]/10 text-brand-charcoal flex items-center justify-center mb-6">
+                                class="w-8 h-8 lg:w-8 lg:h-8 rounded-full bg-[#1c1b1b]/10 text-brand-charcoal flex items-center justify-center mb-2 lg:mb-3 xl:w-10 xl:h-10 xl:mb-6">
                                 <span class="iconify text-lg" data-icon="solar:shield-check-bold-duotone"></span>
                             </div>
                             <h4
-                                class="font-sans font-black tracking-tighter leading-[1.1] py-1 text-2xl brand-gradient-title mb-4">
+                                class="font-sans font-black tracking-tighter leading-[1.1] py-1 text-lg lg:text-xl xl:text-3xl brand-gradient-title mb-1 lg:mb-2 xl:mb-4">
                                 Active Security</h4>
-                            <p class="text-brand-muted font-sans text-sm leading-relaxed">Perimeter monitoring via
-                                Bluetooth
-                                and immediate anti-theft locking system.</p>
+                            <p
+                                class="text-brand-muted font-sans text-[11px] lg:text-[12px] xl:text-sm leading-tight mb-2 lg:mb-3 xl:mb-6">
+                                Perimeter monitoring via
+                                Bluetooth and immediate anti-theft locking system.</p>
                         </div>
                     </div>
                 </div>
@@ -343,35 +382,40 @@
 
                 <!-- PRICING (Direita -> Trilho) -->
                 <div id="plans-cards-rail"
-                    class="absolute right-0 w-max h-full flex flex-col justify-center items-end px-6 md:pr-16 pl-[5vw] pointer-events-none z-10 opacity-0 translate-x-[100vw]">
+                    class="absolute right-0 w-max h-full flex flex-col justify-center items-end px-6 pt-28 pb-10 lg:pt-24 lg:pb-6 xl:pt-0 xl:pb-0 lg:pr-16 pl-[5vw] pointer-events-none z-10 opacity-0 translate-x-[100vw]">
 
                     <!-- Landing Anchor para os Planos (Posicionado para capturar o título Pricing & Performance) -->
                     <div id="plans" class="absolute top-[550vh] left-0 w-full pointer-events-none"></div>
 
                     <!-- Título do Trilho Direito (Planos) embutido no slider -->
-                    <div id="pricing-title" class="w-full text-right z-10 opacity-0 pointer-events-none mb-10 pr-4">
+                    <div id="pricing-title"
+                        class="w-full text-right z-10 opacity-0 pointer-events-none mb-2 lg:mb-4 xl:mb-10 pr-4">
                         <h2
-                            class="text-4xl md:text-6xl font-sans font-black tracking-tighter leading-[1.1] py-2 brand-gradient-title drop-shadow-sm">
+                            class="text-2xl lg:text-4xl xl:text-6xl font-sans font-black tracking-tighter leading-[1.1] py-2 brand-gradient-title drop-shadow-sm">
                             Plans & Performance
                         </h2>
                     </div>
 
-                    <div class="flex flex-row items-stretch justify-end gap-5 w-full">
+                    <div
+                        class="flex flex-col xl:flex-row items-center xl:items-stretch gap-6 lg:gap-3 xl:gap-5 w-full justify-end">
                         <!-- Card 1: Daily Pass -->
                         <div
-                            class="flashlight-hub-card btn-beam flex-shrink-0 w-[85vw] max-w-[310px] p-6 md:p-7 rounded-3xl shadow-[0_20px_60px_rgba(20,30,50,0.08)] pointer-events-auto relative flex flex-col border border-transparent hover:border-white/10 transition-all">
+                            class="flashlight-hub-card btn-beam flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-[60vw] xl:w-[22vw] max-w-[320px] p-4 lg:p-5 xl:p-8 rounded-3xl shadow-[0_20px_60px_rgba(20,30,50,0.08)] pointer-events-auto relative flex flex-col border border-transparent hover:border-white/10 transition-all">
                             <span
-                                class="font-mono text-[10px] text-brand-muted font-bold uppercase tracking-widest mb-4 block">Starter</span>
+                                class="font-mono text-[10px] text-brand-muted font-bold uppercase tracking-widest mb-1 lg:mb-2 xl:mb-4 block">Starter</span>
                             <h4
-                                class="font-sans font-black tracking-tighter leading-[1.1] py-1 text-2xl brand-gradient-title mb-4">
+                                class="font-sans font-black tracking-tighter leading-[1.1] py-1 text-lg lg:text-xl xl:text-3xl brand-gradient-title mb-1 lg:mb-2 xl:mb-4">
                                 Daily Pass</h4>
-                            <p class="text-brand-muted font-sans text-sm mb-6">Perfect for travelers and occasional
-                                riders.
-                                24-hour e-bike access.</p>
+                            <p
+                                class="text-brand-muted font-sans text-[11px] lg:text-[12px] xl:text-sm leading-tight mb-2 lg:mb-3 xl:mb-6">
+                                Perfect for
+                                travelers and occasional
+                                riders. 24-hour e-bike access.</p>
 
                             <div class="mt-auto">
-                                <div class="font-mono font-bold text-brand-charcoal text-3xl mb-6">€5<span
-                                        class="text-xs font-sans text-brand-muted font-normal">/day</span></div>
+                                <div
+                                    class="font-mono font-bold text-brand-charcoal text-2xl lg:text-2xl xl:text-4xl mb-2 lg:mb-3 xl:mb-6">
+                                    €5<span class="text-xs font-sans text-brand-muted font-normal">/day</span></div>
                                 <button
                                     class="w-fit self-start bg-gradient-to-r from-[#4B5EC2]/20 to-[#38BDF8]/20 backdrop-blur-md text-[#4B5EC2] px-5 py-2 rounded-full group transition-all hover:scale-105 hover:from-[#4B5EC2] hover:to-[#38BDF8] hover:text-white border border-[#4B5EC2]/30 font-sans font-bold text-[9px] tracking-widest uppercase">
                                     <span class="relative z-10">Select Plan</span>
@@ -381,21 +425,22 @@
 
                         <!-- Card 2: Annual Subscription (Zmaj Pro) -->
                         <div id="card-zmaj-pro"
-                            class="flashlight-hub-card btn-beam flex-shrink-0 w-[85vw] max-w-[330px] p-6 md:p-8 rounded-3xl shadow-[0_20px_60px_rgba(20,30,50,0.08)] pointer-events-auto relative flex flex-col border border-transparent hover:border-white/10 transition-all">
+                            class="flashlight-hub-card btn-beam flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-[60vw] xl:w-[22vw] max-w-[320px] p-4 lg:p-5 xl:p-8 rounded-3xl shadow-[0_20px_60px_rgba(20,30,50,0.08)] pointer-events-auto relative flex flex-col border border-transparent hover:border-white/10 transition-all">
                             <div
                                 class="absolute top-4 right-4 px-2 py-0.5 bg-[#4B5EC2]/10 text-[#4B5EC2] text-[9px] font-mono uppercase font-bold rounded-full">
                                 POPULAR</div>
                             <span
-                                class="font-mono text-[10px] text-brand-muted font-bold uppercase tracking-widest mb-4 block">Zmaj
+                                class="font-mono text-[10px] text-brand-muted font-bold uppercase tracking-widest mb-1 lg:mb-2 xl:mb-4 block">Zmaj
                                 Pro</span>
                             <h4
-                                class="font-sans font-black tracking-tighter leading-[1.1] py-1 text-3xl brand-gradient-title mb-4">
+                                class="font-sans font-black tracking-tighter leading-[1.1] py-1 text-lg lg:text-xl xl:text-3xl brand-gradient-title mb-1 lg:mb-2 xl:mb-4">
                                 Annual Plan</h4>
-                            <p class="text-brand-muted font-sans text-sm mb-5">Unlimited rides, priority support, and
-                                theft
-                                coverage.</p>
+                            <p
+                                class="text-brand-muted font-sans text-[11px] lg:text-[12px] xl:text-sm leading-tight mb-2 lg:mb-3 xl:mb-5">
+                                Unlimited rides,
+                                priority support, and theft coverage.</p>
 
-                            <ul class="mb-6 space-y-2">
+                            <ul class="mb-2 lg:mb-3 xl:mb-6 space-y-1 xl:space-y-2">
                                 <li class="flex items-center gap-2 text-brand-muted text-[11px] font-sans">
                                     <span class="iconify text-[#4B5EC2]" data-icon="solar:check-circle-bold"></span>
                                     Unlimited Rides
@@ -407,8 +452,9 @@
                             </ul>
 
                             <div class="mt-auto">
-                                <div class="font-mono font-bold text-brand-charcoal text-4xl mb-6">€29<span
-                                        class="text-xs font-sans text-brand-muted font-normal">/month</span></div>
+                                <div
+                                    class="font-mono font-bold text-brand-charcoal text-2xl lg:text-2xl xl:text-4xl mb-2 lg:mb-3 xl:mb-6">
+                                    €29<span class="text-xs font-sans text-brand-muted font-normal">/month</span></div>
                                 <button
                                     class="w-fit self-start bg-gradient-to-r from-[#4B5EC2]/20 to-[#38BDF8]/20 backdrop-blur-md text-[#4B5EC2] px-5 py-2.5 rounded-full group transition-all hover:scale-105 hover:from-[#4B5EC2] hover:to-[#38BDF8] hover:text-white border border-[#4B5EC2]/30 font-sans font-bold text-[9px] tracking-widest uppercase">
                                     <span class="relative z-10">Select Plan</span>
@@ -418,18 +464,23 @@
 
                         <!-- Card 3: Business Fleet -->
                         <div
-                            class="flashlight-hub-card btn-beam flex-shrink-0 w-[85vw] max-w-[310px] p-6 md:p-7 rounded-3xl shadow-[0_20px_60px_rgba(20,30,50,0.08)] pointer-events-auto relative flex flex-col border border-transparent hover:border-white/10 transition-all">
+                            class="flashlight-hub-card btn-beam flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-[60vw] xl:w-[22vw] max-w-[320px] p-4 lg:p-5 xl:p-8 rounded-3xl shadow-[0_20px_60px_rgba(20,30,50,0.08)] pointer-events-auto relative flex flex-col border border-transparent hover:border-white/10 transition-all">
                             <span
-                                class="font-mono text-[10px] text-brand-muted font-bold uppercase tracking-widest mb-4 block">Fleet</span>
+                                class="font-mono text-[10px] text-brand-muted font-bold uppercase tracking-widest mb-1 lg:mb-2 xl:mb-4 block">Fleet</span>
                             <h4
-                                class="font-sans font-black tracking-tighter leading-[1.1] py-1 text-2xl brand-gradient-title mb-4">
+                                class="font-sans font-black tracking-tighter leading-[1.1] py-1 text-lg lg:text-xl xl:text-3xl brand-gradient-title mb-1 lg:mb-2 xl:mb-4">
                                 Business</h4>
-                            <p class="text-brand-muted font-sans text-sm mb-6">Custom solutions for companies and
+                            <p
+                                class="text-brand-muted font-sans text-[11px] lg:text-[12px] xl:text-sm leading-tight mb-2 lg:mb-3 xl:mb-6">
+                                Custom solutions
+                                for companies and
                                 hotels.
                             </p>
 
                             <div class="mt-auto">
-                                <div class="font-mono font-bold text-brand-charcoal text-3xl mb-6">Custom</div>
+                                <div
+                                    class="font-mono font-bold text-brand-charcoal text-2xl lg:text-2xl xl:text-4xl mb-2 lg:mb-3 xl:mb-6">
+                                    Custom</div>
                                 <button
                                     class="w-fit self-start bg-gradient-to-r from-[#4B5EC2]/20 to-[#38BDF8]/20 backdrop-blur-md text-[#4B5EC2] px-5 py-2 rounded-full group transition-all hover:scale-105 hover:from-[#4B5EC2] hover:to-[#38BDF8] hover:text-white border border-[#4B5EC2]/30 font-sans font-bold text-[9px] tracking-widest uppercase">
                                     <span class="relative z-10">Contact Us</span>
@@ -503,13 +554,178 @@
             </div>
         </section>
 
+        <!-- SEÇÃO ESG: IMPACT & SUSTAINABILITY (Dark Mode Bridge) -->
+        <section id="impact" class="relative w-full py-32 bg-brand-charcoal z-[25] overflow-hidden">
+            <div class="absolute inset-0 bg-[url('assets/img/noise.png')] opacity-[0.03] pointer-events-none"></div>
+            
+            <!-- 1. Transição de Entrada (App Hub -> Impact) -->
+            <div class="absolute top-0 left-0 w-full h-[15vh] z-20 pointer-events-none" style="background: linear-gradient(to bottom, #9cc9f9 0%, #212121 100%);"></div>
+
+            <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(300px,auto)] relative z-10">
+                
+                <!-- CARD 1: O GRÁFICO MAIOR (Donut + Insights) -->
+                <div class="md:col-span-2 flashlight-card btn-beam relative overflow-hidden p-8 lg:p-10 rounded-3xl border border-white/10 bg-black/40 backdrop-blur-md flex flex-col justify-between group hover:border-white/20 transition-all">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-8 h-full">
+                        
+                        <!-- Donut Side -->
+                        <div class="relative w-[220px] h-[220px] shrink-0">
+                            <svg class="w-full h-full" viewbox="0 0 36 36" style="transform: rotate(-90deg);">
+                                <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3"></circle>
+                                
+                                <!-- Slices convertidas em paths para animação GSAP facilitada se necessário, ou mantidas como círculos se o JS do usuário for adaptado -->
+                                <circle class="aura-slice" cx="18" cy="18" r="15.9" fill="none" stroke="#38BDF8" stroke-width="3.2" stroke-dasharray="18 82" stroke-dashoffset="0" stroke-linecap="round" style="animation: aura-chart-fill 2s ease-out forwards;"></circle>
+                                <circle class="aura-slice" cx="18" cy="18" r="15.9" fill="none" stroke="#365CD1" stroke-width="3.2" stroke-dasharray="12 88" stroke-dashoffset="-18" stroke-linecap="round" style="animation: aura-chart-fill 2s ease-out 0.2s forwards;"></circle>
+                                
+                                <!-- Esta é a slice/linha principal que o JS do usuário vai procurar e animar -->
+                                <path class="aura-slice" d="M33.9 18a15.9 15.9 0 1 1-31.8 0 15.9 15.9 0 1 1 31.8 0" fill="none" stroke="rgba(56,189,248,0.5)" stroke-width="3.2" stroke-dasharray="25 75" stroke-dashoffset="-30" stroke-linecap="round" />
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                                <span class="font-mono text-4xl lg:text-5xl font-black text-white drop-shadow-[0_0_15px_rgba(56,189,248,0.4)]">
+                                    <span class="gsap-counter" data-target="1200">0</span><span class="text-4xl md:text-5xl text-brand-aura/80 ml-2">MWh</span>
+                                </span>
+                                <span class="text-[10px] uppercase tracking-widest text-brand-aura mt-1">Energy Recovered</span>
+                            </div>
+                        </div>
+
+                        <!-- Info/List Side -->
+                        <div class="flex-1 space-y-4 w-full">
+                            <!-- Ícone Pulsante com Aura -->
+                            <div class="w-12 h-12 rounded-full bg-brand-aura/10 text-brand-aura flex items-center justify-center mb-6 relative">
+                                <div class="absolute inset-0 bg-brand-aura animate-pulse rounded-full opacity-30"></div>
+                                <span class="iconify text-2xl relative z-10" data-icon="solar:bolt-bold-duotone"></span>
+                            </div>
+                            
+                            <h3 class="font-sans text-2xl lg:text-3xl font-black text-white tracking-tighter leading-none mb-4">
+                                Kinetic energy regenerated
+                            </h3>
+                            <p class="text-white/50 text-sm mt-2 font-sans font-light">Power automatically recovered through our smart regenerative braking system.</p>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/5 group-hover:border-white/10 transition-all">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-2 h-2 rounded-full bg-brand-aura shadow-[0_0_8px_#38BDF8]"></div>
+                                        <span class="text-xs text-white/70">Zmaj Active Fleet</span>
+                                    </div>
+                                    <span class="text-xs font-mono text-brand-aura font-bold">640t</span>
+                                </div>
+                                <div class="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/5">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-2 h-2 rounded-full bg-brand-zip shadow-[0_0_8px_#365CD1]"></div>
+                                        <span class="text-xs text-white/70">Connected Hubs</span>
+                                    </div>
+                                    <span class="text-xs font-mono text-brand-zip font-bold">420t</span>
+                                </div>
+                                <div class="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/5">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-2 h-2 rounded-full bg-white/20"></div>
+                                        <span class="text-xs text-white/70">Urban Rail Offset</span>
+                                    </div>
+                                    <span class="text-xs font-mono text-white/40">140t</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 2: GRÁFICO CIRCULAR/RADIAL (Orbit Animation) -->
+                <div class="flashlight-card btn-beam relative overflow-hidden p-8 rounded-3xl border border-white/10 bg-black/40 backdrop-blur-md flex flex-col justify-between items-center text-center group hover:border-white/20 transition-all">
+                    <!-- Ícone Pulsante com Aura -->
+                    <div class="w-12 h-12 rounded-full bg-brand-zip/10 text-brand-zip flex items-center justify-center mb-6 relative">
+                        <div class="absolute inset-0 bg-brand-zip animate-pulse rounded-full opacity-30"></div>
+                        <span class="iconify text-2xl relative z-10" data-icon="solar:cpu-bold-duotone"></span>
+                    </div>
+
+                    <div class="relative w-48 h-48 flex items-center justify-center scale-90 mb-6">
+                        <!-- Background Grid/Decoration -->
+                        <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#38BDF8 1px, transparent 0); background-size: 10px 10px;"></div>
+                        
+                        <!-- Orbit system -->
+                        <div class="relative w-40 h-40">
+                             <div class="absolute inset-0 rounded-full border border-brand-aura/20"></div>
+                             <div class="absolute inset-2 rounded-full border border-brand-zip/10"></div>
+                             
+                             <!-- Rotating elements -->
+                             <div class="absolute inset-0 z-10" style="animation: orbit 20s linear infinite;">
+                                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-charcoal border border-brand-aura flex items-center justify-center shadow-[0_0_15px_rgba(56,189,248,0.5)]" style="animation: orbit-reverse 20s linear infinite;">
+                                     <span class="iconify text-brand-aura" data-icon="solar:cpu-bold-duotone"></span>
+                                 </div>
+                             </div>
+                             <div class="absolute inset-6 z-10" style="animation: orbit 15s linear infinite reverse;">
+                                 <div class="absolute bottom-0 right-1/2 translate-x-1/2 w-6 h-6 rounded-full bg-brand-charcoal border border-brand-zip flex items-center justify-center" style="animation: orbit-reverse 15s linear infinite;">
+                                     <span class="iconify text-brand-zip text-xs" data-icon="solar:gps-bold-duotone"></span>
+                                 </div>
+                             </div>
+
+                             <!-- Center Text -->
+                             <div class="absolute inset-10 rounded-full bg-brand-charcoal/80 backdrop-blur-sm border border-white/5 flex flex-col items-center justify-center z-20">
+                                 <span class="font-mono text-4xl font-black text-white">
+                                    <span class="gsap-counter" data-target="12">0</span><span class="text-3xl text-brand-zip/80 ml-1">ms</span>
+                                 </span>
+                             </div>
+                        </div>
+                    </div>
+                    <div class="relative z-10">
+                        <h3 class="font-sans text-xl font-black text-white tracking-tighter mb-2">Cloud latency</h3>
+                        <p class="text-white/40 text-sm font-serif italic">Real-time bike-to-app telemetry</p>
+                    </div>
+                </div>
+
+                <!-- CARD 3: CARD INFERIOR/LATERAL (Ticket Network / Floating) -->
+                <div class="md:col-span-3 flashlight-card btn-beam relative overflow-hidden p-8 lg:p-10 rounded-3xl border border-white/10 bg-black/40 backdrop-blur-md flex flex-col md:flex-row items-center justify-between group hover:border-white/20 transition-all">
+                    
+                    <div class="flex items-center gap-8 md:gap-12 w-full md:w-auto mb-10 md:mb-0">
+                        <!-- Floating Logo System -->
+                        <div class="relative w-32 h-32 flex items-center justify-center shrink-0">
+                            <div class="absolute inset-0 rounded-full bg-brand-aura/5 animate-pulse-logo"></div>
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-aura to-brand-zip flex items-center justify-center shadow-2xl animate-float-1">
+                                <span class="iconify text-3xl text-white" data-icon="solar:magic-stick-3-bold-duotone"></span>
+                            </div>
+                            
+                            <!-- Connection nodes -->
+                            <div class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-brand-charcoal border border-white/10 flex items-center justify-center animate-float-2">
+                                <span class="iconify text-white/40 text-xs" data-icon="solar:map-point-bold-duotone"></span>
+                            </div>
+                            <div class="absolute -bottom-2 -left-2 w-8 h-8 rounded-full bg-brand-charcoal border border-white/10 flex items-center justify-center animate-float-3">
+                                <span class="iconify text-white/40 text-xs" data-icon="solar:cloud-sun-bold-duotone"></span>
+                            </div>
+                        </div>
+
+                        <div class="text-left">
+                            <h3 class="font-sans text-3xl md:text-5xl font-black text-white tracking-tighter mb-2 italic">Predictive AI Routing</h3>
+                            <p class="text-brand-aura text-lg lg:text-xl font-serif italic opacity-80">Constantly analyzing traffic, topography, and battery to map your perfect trajectory.</p>
+                        </div>
+                    </div>
+
+                    <div class="relative flex flex-col gap-4 w-full md:w-64">
+                         <div class="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10" style="animation: aura-float-card 4s ease-in-out infinite;">
+                             <div class="flex items-center gap-3">
+                                 <span class="iconify text-emerald-400" data-icon="solar:map-point-bold-duotone"></span>
+                                 <span class="text-xs text-white/60">Live Traffic Mapping</span>
+                             </div>
+                             <span class="text-[10px] uppercase font-bold text-white/20 tracking-widest text-right">Active</span>
+                         </div>
+                         <div class="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10" style="animation: aura-float-card 4s ease-in-out infinite; animation-delay: 1.5s;">
+                             <div class="flex items-center gap-3">
+                                 <span class="iconify text-brand-aura" data-icon="solar:cloud-sun-bold-duotone"></span>
+                                 <span class="text-xs text-white/60">Hyper-local Weather</span>
+                             </div>
+                         </div>
+                         <div class="flex items-center justify-between p-4 rounded-2xl bg-brand-zip/20 border border-brand-zip/30" style="animation: aura-float-card 4s ease-in-out infinite; animation-delay: 2.5s;">
+                             <div class="flex items-center gap-3">
+                                 <span class="iconify text-2xl text-white" data-icon="solar:accumulator-bold-duotone"></span>
+                                 <span class="text-xs text-white font-bold">Zmaj AI Engine Connect</span>
+                             </div>
+                         </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
         <!-- SEÇÃO 4: DOWNLOAD / CONVERSION (Cinematic Video + Interactive Carousel) -->
         <section id="download"
             class="relative w-full min-h-[110vh] overflow-hidden bg-black flex items-center justify-center z-30">
-            <!-- 1. Máscara de Transição (The Gradient Feather) -->
-            <div class="absolute top-0 left-0 w-full h-[20vh] z-20 pointer-events-none"
-                style="background: linear-gradient(to bottom, #9cc9f9 0%, rgba(156, 201, 249, 0.8) 30%, transparent 100%);">
-            </div>
+            <!-- 1. Máscara de Transição (Impact -> Download) -->
+            <div class="absolute top-0 left-0 w-full h-[25vh] z-20 pointer-events-none" style="background: linear-gradient(to bottom, #212121 0%, rgba(33, 33, 33, 0.5) 50%, transparent 100%);"></div>
 
             <!-- Cinematic Background Video -->
             <video id="download-video" autoplay loop muted playsinline poster=""

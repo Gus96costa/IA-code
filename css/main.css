@@ -581,3 +581,106 @@ body {
 .nav-link-item:hover {
     color: #365CD1 !important;
 }
+
+/* =========================================
+   GSAP HARDWARE ACCELERATION & PERFORMANCE
+   ========================================= */
+#central-bike,
+#cloud-front-1, #cloud-front-2, 
+#cloud-back-1, #cloud-back-2,
+#city-ground,
+#hub-phone,
+#vantage-cards, #plans-cards-rail,
+#beat-1, #beat-2, #beat-3 {
+    will-change: transform, opacity;
+    /* Força a renderização na GPU e previne 'flickering' no Safari */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    /* Remove qualquer perspetiva residual que cause lag em dropshadows */
+    perspective: 1000px;
+}
+
+/* OTIMIZAÇÃO DE GLASSMORPHISM */
+.glass-panel,
+.flashlight-hub-card,
+.btn-beam,
+#mobile-menu-overlay,
+.conversion-beam {
+    /* Suporte específico e otimizado para motores webkit (Safari/iOS) */
+    -webkit-backdrop-filter: blur(20px); 
+    backdrop-filter: blur(20px);
+    /* Previne que as sombras (drop-shadow) recalculem a cada frame do scroll */
+    will-change: transform; 
+    transform: translate3d(0, 0, 0);
+}
+
+/* SUAVIZAÇÃO DE IMAGENS GRANDES */
+img {
+    /* Mantém as extremidades suaves durante o GSAP Scaling */
+    image-rendering: -webkit-optimize-contrast;
+    -ms-interpolation-mode: bicubic;
+}
+
+/* =========================================
+   ACCESSIBILITY (A11y) & FOCUS STATES
+   ========================================= */
+/* Remove o outline padrão feio dos browsers e aplica um premium */
+*:focus:not(:focus-visible) {
+    outline: none;
+}
+
+*:focus-visible {
+    outline: 2px solid #38BDF8 !important; /* Azul Aura */
+    outline-offset: 4px !important;
+    border-radius: 4px;
+    transition: outline-offset 0.2s ease;
+}
+
+/* Ajuste específico para elementos redondos como o botão de download */
+.rounded-full:focus-visible {
+    border-radius: 9999px;
+}
+/* =========================================
+   ESG IMPACT GRADIENT ANIMATIONS & KEYFRAMES
+   ========================================= */
+@keyframes orbit {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes orbit-reverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+}
+
+@keyframes aura-scroll-down {
+    0% { transform: translateY(-50%); }
+    100% { transform: translateY(0); }
+}
+@keyframes aura-scroll-up {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+}
+
+@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-6px); } }
+@keyframes pulse-glow { 0%, 100% { transform: scale(1); box-shadow: 0 0 80px rgba(56,189,248,0.2); } 50% { transform: scale(1.05); box-shadow: 0 0 120px rgba(56,189,248,0.4); } }
+
+@keyframes aura-spin-chart { from { transform: rotate(-90deg); } to { transform: rotate(270deg); } }
+@keyframes aura-float-card { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-6px); } }
+@keyframes aura-pulse-slow { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.05); } }
+
+@keyframes aura-chart-fill {
+    0% { stroke-dasharray: 0 95; opacity: 0; }
+    15% { opacity: 1; }
+    100% { stroke-dasharray: 18 77; opacity: 1; }
+}
+
+@keyframes aura-typing {
+    0%, 5% { width: 0; }
+    40%, 80% { width: 100%; }
+    90%, 100% { width: 0; }
+}
+@keyframes aura-blink {
+    0%, 100% { border-color: transparent; }
+    50% { border-color: #38BDF8; }
+}
